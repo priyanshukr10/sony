@@ -1,0 +1,199 @@
+Here's a **step-by-step guide** for your **Root CA**, **Subordinate CA**, and **Web Server certificate setup**, with **highlighted commands** and clear sectioning.
+
+---
+
+## 🔐 Root CA Setup (Machine: `deb1`)
+
+### 1. Create directory structure:
+
+```bash
+mkdir certs crl csr newcerts private
+chmod 700 private
+touch index.txt index.txt.attr
+echo 1000 > serial
+echo 1000 > crlnumber
+```
+
+### 2. Download and edit `rootca.cnf`:
+
+* Set `dir = /home/shuhari/ca` inside the config file.
+
+### 3. Install OpenSSL:
+
+```bash
+sudo apt install openssl
+```
+
+### 4. Generate Encrypted Private Key:
+
+```bash
+openssl genrsa -aes256 -out private/ca.key.pem 4096
+chmod 400 private/ca.key.pem
+```
+
+### 5. Generate Self-Signed Root Certificate:
+
+```bash
+openssl req -config rootca.cnf \
+    -key private/ca.key.pem \
+    -new -x509 -days 7300 -sha256 \
+    -extensions v3_ca \
+    -out certs/ca.cert.pem
+```
+
+---
+
+## 🧾 Subordinate CA Setup (Machine: `deb2`)
+
+### 1. Create directory structure:
+
+```bash
+mkdir subca && cd subca
+mkdir certs crl csr newcerts private
+chmod 700 private
+touch index.txt index.txt.attr
+echo 1000 > serial
+echo 1000 > crlnumber
+```
+
+### 2. Download and edit `subca.cnf`:
+
+* Set `dir = /home/shuhari/ca/subca`
+
+### 3. Generate Subordinate CA Private Key:
+
+```bash
+openssl genrsa -out private/subca.key.pem 4096
+chmod 400 private/subca.key.pem
+```
+
+### 4. Generate CSR:
+
+```bash
+openssl req -config subca.cnf \
+    -new -sha256 \
+    -key private/subca.key.pem \
+    -out csr/subca.csr.pem
+```
+
+### 5. Send CSR to Root CA (`deb1`)
+
+*(Copy `csr/subca.csr.pem` to Root CA)*
+
+---
+
+### ✅ On Root CA (`deb1`): Sign Subordinate CSR
+
+```bash
+openssl ca -config rootca.cnf \
+    -extensions v3_intermediate_ca \
+    -days 3650 -notext -md sha256 \
+    -in subca/csr/subca.csr.pem \
+    -out subca/certs/subca.cert.pem
+```
+
+### 🔁 Copy `subca.cert.pem` back to `deb2` (Sub CA)
+
+---
+
+## 🌐 Web Server Certificate Setup (Machine: `deb3`)
+
+### 1. Create cert directory:
+
+```bash
+mkdir certs && cd certs
+```
+
+### 2. Edit `subca.cnf`:
+
+Under `[alt_names]` section:
+
+```
+DNS.1 = *.shuhari.local
+```
+
+### 3. Generate Web Server Private Key (unencrypted):
+
+```bash
+openssl genrsa -out www.shuhari.local.key.pem 2048
+chmod 400 www.shuhari.local.key.pem
+```
+
+### 4. Generate CSR:
+
+```bash
+openssl req -config subca.cnf \
+    -key www.shuhari.local.key.pem \
+    -new -sha256 \
+    -out www.shuhari.local.csr.pem
+```
+
+> Common Name (CN): `www.shuhari.local`
+
+### 5. Send CSR to Sub CA (`deb2`)
+
+---
+
+### 📬 On Sub CA (`deb2`): Sign Web Server CSR
+
+```bash
+openssl ca -config subca.cnf \
+    -extensions server_cert \
+    -days 375 -notext -md sha256 \
+    -in csr/www.shuhari.local.csr.pem \
+    -out certs/www.shuhari.local.cert.pem
+```
+
+---
+
+## 🔗 Final Web Server Setup (`deb3`)
+
+### 1. Copy certs:
+
+* `www.shuhari.local.cert.pem`
+* `subca.cert.pem`
+* `ca.cert.pem`
+
+### 2. Create Certificate Chain:
+
+```bash
+cat www.shuhari.local.cert.pem subca.cert.pem ca.cert.pem > www.shuhari.local.cert.chain.pem
+```
+
+### 3. Install Apache2:
+
+```bash
+sudo apt install apache2
+```
+
+### 4. Create SSL directory:
+
+```bash
+sudo mkdir -p /etc/apache2/ssl
+```
+
+### 5. Copy files to `/etc/apache2/ssl/`:
+
+```bash
+sudo cp www.shuhari.local.key.pem /etc/apache2/ssl/
+sudo cp www.shuhari.local.cert.chain.pem /etc/apache2/ssl/
+```
+
+### 6. Configure Apache (inside SSL VirtualHost or `default-ssl.conf`):
+
+Edit config to include:
+
+```
+SSLCertificateFile    /etc/apache2/ssl/www.shuhari.local.cert.chain.pem
+SSLCertificateKeyFile /etc/apache2/ssl/www.shuhari.local.key.pem
+```
+
+### 7. Restart Apache:
+
+```bash
+sudo systemctl restart apache2
+```
+
+---
+
+Let me know if you want me to help generate the `.cnf` templates or Apache config!
