@@ -1,0 +1,143 @@
+Great! Let's go through **Encryption Analysis and Decryption Testing** using **VeraCrypt** and **GPG** on **Kali Linux** — both are powerful tools used in cybersecurity, digital forensics, and privacy.
+
+---
+
+## 🔐 PART 1: **VeraCrypt Encryption & Decryption on Kali**
+
+### ✅ Step 1: Install VeraCrypt (if not already installed)
+
+```bash
+sudo apt update
+sudo apt install veracrypt -y
+```
+
+---
+
+### ✅ Step 2: Create an Encrypted Volume
+
+```bash
+veracrypt --text
+```
+
+Then:
+
+```bash
+veracrypt --text --create myvolume.hc
+```
+
+You’ll be guided through:
+
+* Volume type: `[1] Normal`
+* File location: `myvolume.hc`
+* Encryption Algorithm: `[1] AES` (default)
+* Hash: `[1] SHA-512` (default)
+* Size: e.g., `100M`
+* Password: (set a strong one)
+* Filesystem: `ext3`, `FAT`, etc.
+
+---
+
+### ✅ Step 3: Mount the Encrypted Volume
+
+```bash
+sudo mkdir /mnt/secure
+veracrypt myvolume.hc /mnt/secure
+```
+
+You’ll be prompted for the password.
+
+---
+
+### ✅ Step 4: Use it like a normal drive
+
+```bash
+cd /mnt/secure
+echo "Confidential Data" > secret.txt
+```
+
+---
+
+### ✅ Step 5: Dismount
+
+```bash
+veracrypt -d
+```
+
+---
+
+## 🔍 Analysis Tips:
+
+* Check file size: `ls -lh myvolume.hc`
+* Try to brute-force (for analysis only) with tools like `veracrypt-volume-analysis` (Kali has plugins)
+* Observe structure with `hexdump`, `binwalk`, or `strings` on the container file
+
+---
+
+## 🔐 PART 2: **GPG (GNU Privacy Guard)** Encryption & Decryption
+
+### ✅ Step 1: Generate a GPG Key
+
+```bash
+gpg --full-generate-key
+```
+
+* Choose: RSA + RSA
+* Key size: 2048 or 4096
+* Validity: 0 = never expires
+* Name, email, and passphrase: Enter accordingly
+
+---
+
+### ✅ Step 2: Encrypt a File
+
+Create a file:
+
+```bash
+echo "Top Secret Message" > message.txt
+```
+
+Encrypt it:
+
+```bash
+gpg -e -r "Your Name" message.txt
+```
+
+This creates: `message.txt.gpg`
+
+---
+
+### ✅ Step 3: Decrypt the File
+
+```bash
+gpg -d message.txt.gpg > decrypted.txt
+```
+
+Verify:
+
+```bash
+cat decrypted.txt
+```
+
+---
+
+## 🔍 GPG Analysis Tips:
+
+* Use `gpg --list-keys` to inspect stored keys
+* Use `gpg --export -a` to backup public keys
+* Check encryption headers with `hexdump`, `file`, or `binwalk`
+
+---
+
+## 📋 Summary
+
+| Tool      | Task                    | Command Example                       |
+| --------- | ----------------------- | ------------------------------------- |
+| VeraCrypt | Create encrypted volume | `veracrypt --text --create volume.hc` |
+| VeraCrypt | Mount volume            | `veracrypt volume.hc /mnt/secure`     |
+| GPG       | Generate key            | `gpg --full-generate-key`             |
+| GPG       | Encrypt file            | `gpg -e -r "Name" file.txt`           |
+| GPG       | Decrypt file            | `gpg -d file.txt.gpg > output.txt`    |
+
+---
+
+Would you like a **lab assignment PDF** or a **challenge exercise** to test these skills (like decrypting a file with a shared public key)?
