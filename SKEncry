@@ -1,0 +1,133 @@
+Great! CrypTool supports a wide range of **symmetric key encryption algorithms**, including both **classic ciphers** (like Caesar and Substitution) and **modern block/stream ciphers** (like AES, DES, RC4, etc.).
+
+Here's a **guide** on how to use each of these symmetric encryption methods in **CrypTool 1**:
+
+---
+
+## 🔐 **Classic Symmetric Ciphers**
+
+### 🔸 **1. Caesar Cipher**
+
+* **Encrypt:**
+
+  1. Type your plaintext.
+  2. Go to `Crypt` > `Symmetric (classic)` > `Caesar`.
+  3. Select `Encrypt`.
+  4. Choose a shift value (e.g., 3).
+* **Decrypt:**
+
+  1. Paste the encrypted text.
+  2. Repeat steps and choose `Decrypt`, enter the same shift value.
+
+---
+
+### 🔸 **2. Substitution Cipher**
+
+* **Encrypt:**
+
+  1. Go to `Crypt` > `Symmetric (classic)` > `Monoalphabetic Substitution`.
+  2. Enter a substitution key or let CrypTool generate one.
+* **Decrypt:**
+
+  1. Use the reverse of the key or use the same substitution table.
+
+---
+
+### 🔸 **3. XOR Cipher**
+
+* **Encrypt/Decrypt:**
+
+  1. Go to `Crypt` > `Symmetric (classic)` > `XOR`.
+  2. Enter a key (text or hex).
+  3. This works the same for encryption and decryption (symmetric behavior).
+
+---
+
+### 🔸 **4. Vernam Cipher (One-Time Pad)**
+
+* **Encrypt:**
+
+  1. Go to `Crypt` > `Symmetric (classic)` > `Vernam`.
+  2. Choose or generate a random key of the same length as the plaintext.
+* **Decrypt:**
+
+  1. Use the same key – must match exactly.
+
+---
+
+## 🔐 **Modern Symmetric Ciphers**
+
+### 🔸 **5. DES (Data Encryption Standard)**
+
+* **Encrypt:**
+
+  1. Go to `Crypt` > `Symmetric (modern)` > `DES`.
+  2. Select `Encrypt`, enter 64-bit key (as text or hex).
+* **Decrypt:**
+
+  1. Use the same method, enter the same key.
+
+---
+
+### 🔸 **6. Triple DES (3DES)**
+
+* **Encrypt:**
+
+  1. `Crypt` > `Symmetric (modern)` > `Triple DES`.
+  2. Choose `Encrypt`, input 128 or 192-bit key.
+* **Decrypt:**
+
+  1. Same process, same key.
+
+---
+
+### 🔸 **7. AES (Advanced Encryption Standard)**
+
+* **Encrypt:**
+
+  1. `Crypt` > `Symmetric (modern)` > `AES`.
+  2. Choose key size (128, 192, or 256 bits).
+  3. Enter the key and encrypt.
+* **Decrypt:**
+
+  1. Use the same key and method.
+
+---
+
+### 🔸 **8. RC4 (Stream Cipher)**
+
+* **Encrypt:**
+
+  1. `Crypt` > `Symmetric (modern)` > `RC4`.
+  2. Enter a variable-length key (e.g., 40 to 2048 bits).
+* **Decrypt:**
+
+  1. Same steps, same key.
+
+---
+
+## 🧪 Example Test Values (Try in CrypTool)
+
+* **Plaintext**: `HELLO CRYPTO`
+* **Caesar Key**: 3 → `KHOOR FUBSWR`
+* **AES Key**: `Th!s1sA128bitKy`
+* **DES Key (in hex)**: `0123456789ABCDEF`
+
+---
+
+## ✅ Summary Table
+
+| Cipher       | Type    | Key Needed? | CrypTool Menu Path                         |
+| ------------ | ------- | ----------- | ------------------------------------------ |
+| Caesar       | Classic | Yes         | Crypt > Symmetric (classic) > Caesar       |
+| Substitution | Classic | Yes         | Crypt > Symmetric (classic) > Substitution |
+| XOR          | Classic | Yes         | Crypt > Symmetric (classic) > XOR          |
+| Vernam       | Classic | Yes         | Crypt > Symmetric (classic) > Vernam       |
+| DES          | Modern  | Yes         | Crypt > Symmetric (modern) > DES           |
+| Triple DES   | Modern  | Yes         | Crypt > Symmetric (modern) > Triple DES    |
+| AES          | Modern  | Yes         | Crypt > Symmetric (modern) > AES           |
+| RC4          | Modern  | Yes         | Crypt > Symmetric (modern) > RC4           |
+
+---
+
+Would you like a **tutorial PDF**, a **recorded demo**, or help with **CrypTool 2 (workflow-based)** instead?
