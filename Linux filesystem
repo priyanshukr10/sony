@@ -1,0 +1,172 @@
+Excellent! You're looking to use **Sleuth Kit (TSK)** and **Log2Timeline (Plaso)** for **Linux filesystem and timeline analysis** on **Kali Linux**.
+
+Here’s a **complete step-by-step lab** using tools available on Kali.
+
+---
+
+## 🔧 Tools Overview
+
+| Tool            | Purpose                               |
+| --------------- | ------------------------------------- |
+| Sleuth Kit      | Filesystem analysis (ext, NTFS, etc.) |
+| Autopsy         | GUI frontend for Sleuth Kit           |
+| Plaso           | Timeline creation and analysis        |
+| log2timeline.py | Collect timestamps into Plaso DB      |
+| psort.py        | Process Plaso DB into readable format |
+
+---
+
+## 🧪 Lab Scenario: Analyze a Linux disk image (`image.dd`)
+
+---
+
+## ✅ STEP 1: Install Required Tools
+
+```bash
+sudo apt update
+sudo apt install sleuthkit plaso autopsy -y
+```
+
+---
+
+## 📦 STEP 2: Get or Create a Linux Disk Image
+
+If you don't have one, you can create using `dd`:
+
+```bash
+sudo dd if=/dev/sda of=~/diskimage.dd bs=4M status=progress
+```
+
+Or use a sample image from: [https://digitalcorpora.org/corpora/](https://digitalcorpora.org/corpora/)
+
+---
+
+## 🗂 STEP 3: Sleuth Kit Basic FileSystem Analysis
+
+### 1. Identify Partitions
+
+```bash
+mmls diskimage.dd
+```
+
+Find the starting sector of the partition (e.g., 2048).
+
+### 2. List Files and Directories
+
+```bash
+fls -r -p -o 2048 diskimage.dd > fls_output.txt
+```
+
+### 3. Extract a File
+
+```bash
+icat -o 2048 diskimage.dd <inode_number> > extracted_file
+```
+
+You can find inode numbers from the `fls` output.
+
+---
+
+## 🧭 STEP 4: Timeline Creation using Sleuth Kit
+
+```bash
+fls -m / -r -o 2048 diskimage.dd > bodyfile.txt
+```
+
+Then:
+
+```bash
+mactime -b bodyfile.txt > timeline.txt
+less timeline.txt
+```
+
+This will show a full **MAC (Modified, Accessed, Changed)** timestamp table.
+
+---
+
+## 🕒 STEP 5: Timeline Creation with Log2Timeline (Plaso)
+
+### 1. Create Plaso Storage File
+
+```bash
+log2timeline.py plaso.dump diskimage.dd
+```
+
+This will take time — it scans browser history, logs, emails, etc.
+
+### 2. Process Timeline to CSV
+
+```bash
+psort.py -o L2tcsv plaso.dump > timeline.csv
+```
+
+### 3. Analyze CSV
+
+```bash
+less timeline.csv
+```
+
+Or open in Excel/LibreOffice for sorting and filtering.
+
+---
+
+## 🔍 STEP 6: Analysis Tips
+
+* Use `grep`, `awk`, or Excel to filter:
+
+  * Suspicious file creations
+  * Login attempts
+  * Deletion timestamps
+* Combine with known compromise time
+* Correlate with user actions from `bash_history`, `/var/log/`, etc.
+
+---
+
+## 🧰 Optional: SleuthKit with Autopsy (GUI)
+
+```bash
+autopsy
+```
+
+Then open browser to `http://localhost:9999`
+
+Use Autopsy for:
+
+* GUI timeline viewer
+* Keyword search
+* Hash set comparison
+* Web/mail history
+
+---
+
+## 🧾 Example Timeline Entry (from mactime)
+
+```
+/etc/passwd|r/rrwxrwxrwx|0|0|1234|2023-11-01 14:52:06|...|C
+```
+
+---
+
+## ✅ Summary Table
+
+| Task                    | Command                                           |
+| ----------------------- | ------------------------------------------------- |
+| View partitions         | `mmls diskimage.dd`                               |
+| List files in image     | `fls -r -o 2048 diskimage.dd`                     |
+| Extract file            | `icat -o 2048 diskimage.dd <inode>`               |
+| Create bodyfile         | `fls -r -m / -o 2048 diskimage.dd > bodyfile.txt` |
+| MAC timeline            | `mactime -b bodyfile.txt > timeline.txt`          |
+| Plaso collection        | `log2timeline.py plaso.dump diskimage.dd`         |
+| Process timeline to CSV | `psort.py -o L2tcsv plaso.dump > timeline.csv`    |
+
+---
+
+## 🧪 Want a Lab Challenge?
+
+I can provide a:
+
+* Sample `.dd` image for practice
+* Task sheet (e.g., "Find who deleted `/etc/passwd`")
+* Grading criteria (for classroom)
+
+Would you like that?
