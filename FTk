@@ -1,0 +1,298 @@
+Great! You're asking about the **process of creating a forensic image using FTK Imager** and then using **Autopsy** to retrieve/analyze data from that image.
+
+Here's a **step-by-step guide** to help you do that — ideal for Kali Linux forensic labs or classroom demos.
+
+---
+
+## 🔹 **PART 1: Create a Forensic Image using FTK Imager (on Windows)**
+
+> 🧰 **Tool**: [FTK Imager (by AccessData)](https://accessdata.com/product-download/ftk-imager)
+
+### ✅ Step 1: Launch FTK Imager
+
+* Open **FTK Imager** on Windows.
+
+### ✅ Step 2: Create Disk Image
+
+1. Click **File > Create Disk Image**
+2. Choose source:
+
+   * **Physical Drive** (for full disk)
+   * **Logical Drive** (for partitions)
+   * **Image File** or Folder (optional)
+3. Click **Next**
+
+### ✅ Step 3: Image Destination Type
+
+* Choose **Raw (dd)** or **E01** (EWF format)
+
+### ✅ Step 4: Image Destination Details
+
+* Fill in:
+
+  * Case Number
+  * Examiner Name
+  * Description
+* Click **Next**
+
+### ✅ Step 5: Choose Save Location
+
+* Set image filename and destination
+* Click **Finish** to start imaging
+
+> 🔐 FTK Imager will also create an **MD5/SHA1 hash** to ensure integrity.
+
+---
+
+## 🔹 **PART 2: Analyze Image with Autopsy (on Kali or Windows)**
+
+> 🧰 **Tool**: Autopsy (GUI-based forensic tool)
+
+### ✅ Step 1: Launch Autopsy
+
+On Kali:
+
+```bash
+autopsy
+```
+
+Then open the URL shown (usually `http://localhost:9999`) in your browser.
+
+> On Windows, just run `Autopsy.exe`.
+
+---
+
+### ✅ Step 2: Create a New Case
+
+* Click **Create New Case**
+* Fill:
+
+  * Case Name
+  * Examiner
+  * Case Directory
+
+Click **Next**
+
+---
+
+### ✅ Step 3: Add Data Source
+
+1. Choose **Disk Image or VM File**
+2. Browse to select your image file:
+
+   * `.img`, `.dd`, `.E01`, etc.
+3. Click **Next**
+
+---
+
+### ✅ Step 4: Configure Ingest Modules
+
+* Keep default options:
+
+  * Hash Lookup
+  * File Type Identification
+  * Extract EXIF
+  * Keyword Search
+  * Web Artifacts
+  * Etc.
+
+Click **Finish**
+
+---
+
+### ✅ Step 5: Browse and Recover Data
+
+* Use left pane:
+
+  * **File Types**
+  * **Recent Files**
+  * **Deleted Files**
+  * **Web Artifacts**
+  * **User Accounts**
+  * **Emails**, etc.
+
+You can **right-click > Extract** any file to save it.
+
+---
+
+## 📁 Example Lab Scenario
+
+| Item               | Description                               |
+| ------------------ | ----------------------------------------- |
+| Image File         | `evidence.E01` (from FTK Imager)          |
+| Forensic Tool      | Autopsy on Kali or Windows                |
+| Student Task       | Recover deleted files or emails           |
+| Report Deliverable | List of recovered artifacts + screenshots |
+
+---
+
+## ✅ Summary
+
+| Task             | Tool           | Notes                          |
+| ---------------- | -------------- | ------------------------------ |
+| Create Image     | FTK Imager     | Choose `.dd` or `.E01` format  |
+| Analyze Image    | Autopsy        | GUI browser-based              |
+| Extract Evidence | Autopsy export | Files, images, deleted content |
+
+---
+
+Would you like a **sample image file** or a **PDF lab handout** for classroom/lab use? I can provide templates or simulated evidence if needed!
+
+
+Perfect! You're looking to:
+
+🔍 **Create a forensic image using FTK Imager** (likely on Windows)
+🔓 **Analyze and retrieve data using Autopsy on Kali Linux**
+
+Let me walk you through a **complete step-by-step practical guide**.
+
+---
+
+## 🧰 **TOOLS NEEDED**
+
+* FTK Imager (on Windows or Wine on Kali)
+* Kali Linux with **Autopsy**
+* Image file format: `.E01` or `.dd` or `.img`
+
+---
+
+## 🔹 **PART 1: FTK Imager – Create Forensic Image (on Windows)**
+
+> You can transfer the final image to Kali using a USB or network.
+
+### ✅ Steps:
+
+1. Open **FTK Imager**
+2. Go to: `File > Create Disk Image`
+3. Select **Physical Drive** or **Logical Drive**
+4. Choose **Raw (dd)** or **E01 (compressed format)**
+5. Set metadata (case, examiner name, etc.)
+6. Choose location and file name
+7. Click **Finish** to start imaging
+
+👉 Final Output: You’ll get a file like `image.E01` or `disk.dd`
+
+---
+
+## 🔸 Transfer image to Kali
+
+Copy the forensic image (`.E01`, `.dd`, `.img`) to your Kali machine:
+
+```bash
+mkdir ~/forensics
+cp /media/usb/image.E01 ~/forensics/
+```
+
+---
+
+## 🔹 **PART 2: Use Autopsy on Kali to Retrieve Data**
+
+### ✅ Step 1: Start Autopsy
+
+```bash
+autopsy
+```
+
+> This will give you a URL like:
+
+```
+Open your browser to http://localhost:9999/autopsy
+```
+
+---
+
+### ✅ Step 2: Create a New Case
+
+1. Open browser and go to `http://localhost:9999`
+2. Click **"Create New Case"**
+3. Fill in:
+
+   * **Case Name**: e.g., `FTK_Analysis`
+   * **Examiner**: e.g., `YourName`
+   * **Case Directory**: default is fine
+4. Click **Finish**
+
+---
+
+### ✅ Step 3: Add Disk Image
+
+1. Choose **"Add Data Source"**
+2. Select **Disk Image or VM File**
+3. Click **Next**
+4. Browse and select your image (`.E01`, `.dd`, `.img`)
+5. Click **Next**
+
+---
+
+### ✅ Step 4: Configure Ingest Modules
+
+Keep default enabled:
+
+* File Analysis
+* Hash Lookup
+* Deleted File Recovery
+* Web History
+* Keyword Search
+* Etc.
+
+Click **Finish**
+
+---
+
+### ✅ Step 5: Analyze and Retrieve Data
+
+After processing completes:
+
+* Use left pane to browse:
+
+  * **Deleted Files**
+  * **Documents**
+  * **Web Artifacts**
+  * **User Accounts**
+  * **File Metadata**
+  * **Emails**
+* Right-click any file → **Extract** or **View in hex viewer**
+
+---
+
+## 🔍 Example: Recover Deleted Files
+
+1. Click **Views > Deleted Files**
+2. Select `.docx`, `.jpg`, etc.
+3. Right-click → **Extract**
+4. Save to `/home/user/recovered/`
+
+---
+
+## 📸 Optional: Generate Screenshots for Report
+
+Use:
+
+```bash
+gnome-screenshot -a
+```
+
+Or use Kali’s screenshot tool for capturing evidence for your report.
+
+---
+
+## ✅ Summary Table
+
+| Task                     | Tool          | Command/Path                      |
+| ------------------------ | ------------- | --------------------------------- |
+| Create image             | FTK Imager    | File → Create Disk Image          |
+| Transfer image to Kali   | USB/SSH       | `cp image.E01 ~/forensics/`       |
+| Start Autopsy            | Kali Terminal | `autopsy`                         |
+| Open Case                | Browser       | `http://localhost:9999`           |
+| Add image + analyze      | Autopsy GUI   | Add image source + enable modules |
+| Extract/recover evidence | Autopsy GUI   | Right-click → Extract             |
+
+---
+
+Would you like:
+
+* A **sample forensic image (.dd/.E01)** for practice?
+* A **PDF lab handout** version of this?
+* A **script** to auto-run Autopsy analysis?
+
+Let me know how you'd like to proceed!
