@@ -1,0 +1,145 @@
+Great — you're diving into **hex-level file and memory analysis**, often used in **forensics**, **malware analysis**, and **reverse engineering**.
+
+On **Kali Linux**, while **HxD** is a Windows hex editor, **you can use several Linux alternatives** to achieve the same functionality — including **bless**, **hexedit**, **xxd**, and **GHex**.
+
+---
+
+## 🔧 TOOLS FOR HEX / BYTE-LEVEL ANALYSIS ON KALI
+
+| Tool      | Type          | Usage                              |
+| --------- | ------------- | ---------------------------------- |
+| `xxd`     | CLI           | Dump hex from file                 |
+| `hexedit` | CLI (ncurses) | View/edit binary files in terminal |
+| `bless`   | GUI           | Advanced graphical hex editor      |
+| `GHex`    | GUI           | GNOME hex editor, user-friendly    |
+| `GDB`     | CLI           | Memory-level debugging             |
+
+---
+
+## ✅ INSTALLING TOOLS
+
+```bash
+sudo apt update
+sudo apt install hexedit bless ghex -y
+```
+
+---
+
+## 🧪 HEX ANALYSIS TASK EXAMPLES
+
+### 🟢 1. **View File in Hex (with `xxd`)**
+
+```bash
+xxd -g 1 sample_file.bin | less
+```
+
+* `-g 1`: groups bytes by 1 (you can use 2, 4, etc.)
+* Shows offset, hex, and ASCII side-by-side
+
+---
+
+### 🟢 2. **Edit File in Hex (with `hexedit`)**
+
+```bash
+hexedit sample_file.bin
+```
+
+* Use arrow keys to move
+* Edit bytes directly
+* Press `Ctrl+X` to exit, save if prompted
+
+---
+
+### 🟢 3. **Search/Replace Bytes (with `bless` or `GHex`)**
+
+```bash
+bless sample_file.bin
+```
+
+or
+
+```bash
+ghex sample_file.bin
+```
+
+You can:
+
+* Navigate to byte offset
+* Modify bytes directly
+* View ASCII alongside
+
+---
+
+### 🟢 4. **Extract Hidden Content / Stego Clues**
+
+Sometimes stego or malware hides strings:
+
+```bash
+strings -n 4 sample_file.bin
+```
+
+Use this with `xxd` to correlate suspicious areas.
+
+---
+
+## 🧠 MEMORY DUMP ANALYSIS (BYTE LEVEL)
+
+If you have a `.raw` memory dump (e.g., from FTK Imager or Volatility target):
+
+```bash
+xxd memdump.raw | less
+```
+
+* Look for suspicious headers (e.g., `MZ` for executables, JPEG headers, etc.)
+* You can carve files manually by hex signature
+
+---
+
+## 📂 COMMON FILE SIGNATURES TO LOOK FOR
+
+| File Type | Hex Header    | ASCII         |
+| --------- | ------------- | ------------- |
+| EXE       | `4D 5A`       | `MZ`          |
+| PNG       | `89 50 4E 47` | `.PNG`        |
+| JPG       | `FF D8 FF`    | Start of JPEG |
+| PDF       | `25 50 44 46` | `%PDF`        |
+| ZIP       | `50 4B 03 04` | `PK`          |
+
+You can find hidden files by locating these headers and extracting that section of the binary.
+
+---
+
+## 🧬 EXTRACTING FILES FROM HEX
+
+Suppose you find a PDF starting at offset `0x4F00`:
+
+```bash
+dd if=sample_file.bin of=extracted.pdf bs=1 skip=20224
+```
+
+> `20224` = `0x4F00` in decimal
+
+---
+
+## 🧾 SUMMARY COMMANDS
+
+| Task                    | Command                                 |
+| ----------------------- | --------------------------------------- |
+| View hex dump           | `xxd file.bin`                          |
+| Interactive hex editing | `hexedit file.bin`                      |
+| GUI hex editing         | `bless file.bin` or `ghex file.bin`     |
+| Dump strings            | `strings file.bin`                      |
+| Find file signatures    | `xxd`, `grep`, `hexdump`, or `binwalk`  |
+| Carve from offset       | `dd if=file.bin of=newfile skip=N bs=1` |
+
+---
+
+## ✅ Want a Live Lab?
+
+I can provide:
+
+* A challenge file (`.bin`) containing a hidden PDF or EXE
+* Tasks: “Find hidden file”, “Change metadata”, “Patch binary”
+* Scoring sheet (for classroom/assignments)
+
+Would you like me to prepare that?
