@@ -1,0 +1,125 @@
+**OSForensics** is a powerful tool for forensic investigators to process, search, and analyze digital evidence. However, it's primarily a **Windows-based** tool — **not natively supported on Kali Linux**. That said, you can:
+
+### ✅ OPTION 1: **Run OSForensics on Windows (Recommended)**
+
+Use OSForensics on a **Windows system or VM** for evidence processing. It’s ideal for:
+
+* Full disk or folder analysis
+* File signature scanning
+* Hash set matching
+* Email and memory analysis
+* Index/searching evidence
+
+---
+
+### ✅ OPTION 2: **Alternative Tools on Kali (if you must stay on Kali)**
+
+If you're working **strictly within Kali Linux**, here’s how to perform **similar functions** using open-source tools:
+
+---
+
+## 🔹 EVIDENCE PROCESSING ON KALI
+
+### 1. **Create or Mount Disk Image**
+
+If you have a `.dd`, `.E01`, or `.img` image:
+
+```bash
+sudo mkdir /mnt/evidence
+sudo mount -o loop,ro image.dd /mnt/evidence
+```
+
+---
+
+## 🔍 FILE HASHING & HASH MATCHING
+
+### 2. **Generate Hashes**
+
+```bash
+# SHA256 hash of all files in a directory
+find /mnt/evidence -type f -exec sha256sum {} \; > evidence_hashes.txt
+```
+
+### 3. **Compare Hashes Against Known Set**
+
+If you have a known hash set (e.g., NSRL):
+
+```bash
+grep -F -f known_hashes.txt evidence_hashes.txt > matched_hashes.txt
+```
+
+---
+
+## 🔎 FULL TEXT INDEX & SEARCH
+
+### 4. **Using `recoll` or `grep` for content search**
+
+```bash
+grep -ri "search_term" /mnt/evidence
+```
+
+Or install Recoll GUI if needed:
+
+```bash
+sudo apt install recoll
+```
+
+---
+
+## 🔐 HASH VERIFICATION
+
+### 5. **Verify Image Hash**
+
+```bash
+sha256sum image.dd
+```
+
+Compare it with original MD5/SHA1 in acquisition logs (FTK Imager, etc.)
+
+---
+
+## 🗃 TOOLS YOU CAN USE ON KALI INSTEAD OF OSForensics:
+
+| Task                  | Kali Tool               |
+| --------------------- | ----------------------- |
+| Disk image mounting   | `mount`, `ewfmount`     |
+| File hashing          | `sha256sum`, `md5sum`   |
+| Hash match            | `grep`, `hashdeep`      |
+| File indexing         | `recoll`, `grep`        |
+| Deleted file recovery | `foremost`, `scalpel`   |
+| File type analysis    | `binwalk`, `file`       |
+| Timeline analysis     | `log2timeline`, `plaso` |
+
+---
+
+## 📁 OPTIONAL: Run OSForensics via Wine on Kali
+
+⚠️ **Not officially supported, but possible**:
+
+```bash
+sudo apt install wine
+wine OSForensicsSetup.exe
+```
+
+* GUI may break
+* Some modules may not function
+* Better to use a Windows VM if doing a demo/lab
+
+---
+
+## ✅ Summary
+
+| If You Use...             | You Can Do...                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| **OSForensics (Windows)** | Evidence indexing, hash matching, file signature scan, timeline, registry, email, memory |
+| **Kali Tools**            | Mount image, hash files, search content, timeline logs, extract artifacts                |
+
+---
+
+Would you like:
+
+* A lab guide for hash comparison and evidence search using **hashdeep**?
+* A prebuilt evidence image (`.dd`) for training?
+* A detailed **comparison table** between OSForensics and Kali tools?
+
+Let me know how you'd like to proceed!
