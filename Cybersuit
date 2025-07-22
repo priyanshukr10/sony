@@ -1,0 +1,213 @@
+Here's a **step-by-step guide for conducting demo and lab sessions** using the **CyberCheck Suite on Kali Linux**, tailored for training, education, or live demonstrations in cyber forensics.
+
+---
+
+## 🛠️ What is **CyberCheck Suite**?
+
+**CyberCheck Suite** is a GUI-based digital forensic tool developed by CDAC for **law enforcement and academic forensics**. It helps with:
+
+* Disk imaging
+* File carving
+* Keyword search
+* Hash analysis
+* Windows artifact recovery (Registry, Event Logs)
+* Email and chat analysis
+
+> ⚠️ **CyberCheck Suite is not included by default in Kali Linux**. You must request it from [CDAC Pune](https://www.cdac.in/), as it is typically provided to agencies or certified training institutes.
+
+---
+
+## 📦 **Installing CyberCheck Suite on Kali Linux**
+
+> ✅ Assuming you’ve received the **installer (`.tar.gz` or `.run`) and license** from CDAC.
+
+### Step 1: Install Dependencies
+
+```bash
+sudo apt update
+sudo apt install openjdk-8-jdk libqt5widgets5 libsqlite3-0
+```
+
+> CyberCheck Suite uses Java and Qt-based GUI components.
+
+---
+
+### Step 2: Extract and Install
+
+```bash
+tar -xzvf CyberCheckSuite.tar.gz
+cd CyberCheckSuite
+chmod +x install.sh
+sudo ./install.sh
+```
+
+OR, if it's a `.run` file:
+
+```bash
+chmod +x CyberCheckSuite.run
+sudo ./CyberCheckSuite.run
+```
+
+---
+
+### Step 3: Launch the Tool
+
+Once installed:
+
+```bash
+cd /opt/CyberCheckSuite
+./CyberCheckSuite.sh
+```
+
+You will see a GUI interface with modules like:
+
+* **Disk Imaging**
+* **File Carver**
+* **Hash Compare**
+* **Email Parser**
+* **Registry Analyzer**
+
+---
+
+# 🔍 DEMO & LAB SESSION PLAN
+
+## 💡 **Session 1: Introduction to CyberCheck Suite Interface**
+
+### Objectives:
+
+* Understand GUI layout
+* Explore modules and features
+
+**Tasks:**
+
+* Launch tool
+* Navigate modules
+* Show case examples from demo images
+
+---
+
+## 💡 **Session 2: Disk Imaging and Hashing**
+
+### Tools: Disk Image Module, MD5/SHA1
+
+**Steps:**
+
+1. Attach a USB drive or use a `.dd` image
+2. Use `Disk Imaging` to create an image (RAW format)
+3. Generate and save hash values
+4. Compare hashes with the original
+
+✅ Learning: Chain of custody, integrity
+
+---
+
+## 💡 **Session 3: File Carving and Deleted File Recovery**
+
+### Tools: File Carver
+
+**Steps:**
+
+1. Load a `.dd` image
+2. Run **File Carver**
+3. Select file types (JPG, DOCX, EXE, etc.)
+4. Extract and export carved files
+
+✅ Learning: Recover deleted evidence from disk
+
+---
+
+## 💡 **Session 4: Registry and Log File Analysis**
+
+### Tools: Registry Viewer, Log Viewer
+
+**Steps:**
+
+1. Load a forensic image of a Windows system
+2. View `NTUSER.DAT`, `SYSTEM`, `SOFTWARE`
+3. Extract USB device history, run commands, user accounts
+
+✅ Learning: Timeline and user activity reconstruction
+
+---
+
+## 💡 **Session 5: Keyword Search and Hash Analysis**
+
+### Tools: Keyword Search, Known File Hash DB
+
+**Steps:**
+
+1. Define keywords (e.g., `password`, `credit card`)
+2. Run string search across disk
+3. Use hash set (NSRL or custom) to identify known/unknown files
+
+✅ Learning: Investigative search, whitelist filtering
+
+---
+
+## 💡 **Session 6: Email and Chat Analysis**
+
+### Tools: PST/MBOX Parser
+
+**Steps:**
+
+1. Load a `.pst`, `.mbox`, or `.eml` file
+2. Extract sender, recipient, subject, body
+3. Export to PDF or CSV
+
+✅ Learning: Email forensics and evidence extraction
+
+---
+
+# 🧪 Sample LAB EXERCISE Template
+
+### **Lab Title**: Email and File Carving from Infected Disk Image
+
+1. Load provided `.dd` image in CyberCheck Suite.
+2. Use File Carver to extract deleted `.docx` and `.jpg` files.
+3. Use Email Parser to read `.mbox` or `.pst` files.
+4. Search for keyword: `bank`, `password`.
+5. Generate a final evidence report from CyberCheck Suite.
+
+---
+
+# 📁 Where to Get Sample Images
+
+Use freely available forensic images from:
+
+* [https://digitalcorpora.org](https://digitalcorpora.org/)
+* [https://www.vx-underground.org](https://www.vx-underground.org/)
+* Training DVDs from CDAC or NASSCOM
+
+---
+
+## ✅ Summary of CyberCheck Suite Modules
+
+| Module             | Function                           |
+| ------------------ | ---------------------------------- |
+| Disk Imaging       | Acquire and hash disk images       |
+| File Carver        | Recover deleted/lost files         |
+| Registry Analyzer  | Extract Windows registry artifacts |
+| Email Parser       | Extract email evidence             |
+| Log Analyzer       | Parse event logs, browser history  |
+| Keyword Search     | Scan for specific strings          |
+| Timeline Generator | Reconstruct user/system activity   |
+| Hash Comparison    | Match with known/unknown file sets |
+
+---
+
+## 🚀 Final Notes
+
+* 🔐 Always use **write blockers** for real devices
+* 📄 Document every step (screenshots, hash logs, reports)
+* 🧠 Encourage **report writing** as part of the lab
+* 🧰 Use **Autopsy** or **FTK Imager** as alternate tools for comparison
+
+---
+
+Would you like:
+
+* A **PDF handout** or student workbook?
+* A **virtual lab package** with preloaded test images?
+* Or help scripting installation across multiple Kali systems?
+
+Let me know!
