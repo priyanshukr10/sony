@@ -1,0 +1,216 @@
+Conducting a **Cyber Forensics Investigation** using **Kali Linux**, while **addressing privacy and legal considerations**, involves a structured approach to evidence collection, analysis, and reporting—without violating data protection laws or ethical norms.
+
+---
+
+## 🕵️‍♂️ **Goal:**
+
+Set up and conduct a **realistic cyber forensic investigation** using Kali Linux tools while ensuring:
+
+* 🔐 Evidence is preserved
+* ⚖️ Privacy rights are respected
+* 📋 A clear, legal chain of custody is maintained
+
+---
+
+## 🧰 TOOLS REQUIRED (All Available on Kali)
+
+| Tool                                    | Purpose                      |
+| --------------------------------------- | ---------------------------- |
+| `dd` / `dcfldd`                         | Disk imaging                 |
+| `Autopsy`                               | GUI forensic analysis        |
+| `Volatility`                            | Memory analysis              |
+| `Wireshark`                             | Network capture and analysis |
+| `Chkrootkit`                            | Rootkit scanning             |
+| `Binwalk`, `Foremost`, `Bulk Extractor` | File carving                 |
+| `plaso` / `log2timeline`                | Timeline creation            |
+| `Hashdeep`                              | File hash verification       |
+
+---
+
+## 🧪 LAB OVERVIEW: Step-by-Step Investigation
+
+---
+
+### ✅ Step 1: Identify Incident Scenario
+
+Create or define a scenario such as:
+
+> **"A user is suspected of data exfiltration via USB drive and email. Analyze the evidence collected from the user’s system."**
+
+---
+
+### ✅ Step 2: Acquire Digital Evidence (Disk & Memory Image)
+
+#### 📀 Disk Imaging with `dd`
+
+```bash
+sudo dd if=/dev/sdX of=/mnt/evidence/user_disk.dd bs=1M status=progress
+```
+
+> 🔒 **Preserve integrity**:
+
+```bash
+sha256sum /mnt/evidence/user_disk.dd > user_disk.hash
+```
+
+#### 🧠 Memory Capture (using `LiME`)
+
+```bash
+insmod lime.ko "path=/mnt/evidence/memdump.lime format=lime"
+```
+
+---
+
+### ✅ Step 3: Preserve Chain of Custody
+
+Create a case log:
+
+* Who collected the image
+* When and where
+* Hashes before and after
+* Access control list (who accessed the evidence)
+
+Use **`dcfldd`** to log in real-time:
+
+```bash
+sudo dcfldd if=/dev/sdX of=user_disk.dd hash=sha256 log=acquisition.log
+```
+
+---
+
+### ✅ Step 4: Analyze Disk Image in Autopsy
+
+1. Launch Autopsy:
+
+```bash
+autopsy
+```
+
+2. Create a new case
+3. Add the `user_disk.dd` image
+4. Use Autopsy to:
+
+   * Recover deleted files
+   * View internet history, downloads
+   * Search for suspicious keywords (`leak`, `password`, etc.)
+   * Analyze USB device history (via `NTUSER.DAT`, `SYSTEM` registry files)
+
+---
+
+### ✅ Step 5: Analyze Memory Image with Volatility
+
+```bash
+volatility -f memdump.lime imageinfo
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 pslist
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 linux_bash
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 linux_netstat
+```
+
+> Check for:
+
+* Hidden processes
+* Bash command history
+* Network connections
+
+---
+
+### ✅ Step 6: Search for Artifacts
+
+#### 🔍 Keyword Search
+
+```bash
+strings user_disk.dd | grep -i 'confidential'
+```
+
+#### 🔍 File Carving
+
+```bash
+foremost -i user_disk.dd -o output/
+```
+
+#### 🧪 Timeline Creation
+
+```bash
+log2timeline.py plaso.dump user_disk.dd
+psort.py -o L2tcsv -w timeline.csv plaso.dump
+```
+
+---
+
+## ⚖️ Privacy & Legal Considerations
+
+| Aspect                     | Action to Ensure Compliance                 |
+| -------------------------- | ------------------------------------------- |
+| **Consent** or **warrant** | Get legal authorization before imaging      |
+| **Minimize intrusion**     | Don’t analyze unrelated private user data   |
+| **Documentation**          | Maintain logs, hash reports, case notes     |
+| **Storage**                | Store images on **encrypted drives**        |
+| **Chain of Custody**       | Record every access with timestamp and hash |
+| **Reporting**              | Report only evidence relevant to the case   |
+
+---
+
+## 📝 Final Report Structure
+
+1. **Case ID & Date**
+2. **Investigator Name**
+3. **Scope & Purpose**
+4. **Acquisition Summary**
+5. **Hash Values (MD5/SHA256)**
+6. **Tools Used**
+7. **Findings**
+8. **Conclusion & Recommendations**
+9. **Appendix: Screenshots, Logs, Reports**
+
+---
+
+## 🧪 Sample Lab Exercise
+
+### 💡 Lab Title: Investigate Suspected Data Theft
+
+#### Objectives:
+
+* Acquire and analyze disk image
+* Recover deleted documents
+* Trace USB usage and email artifacts
+* Create a forensic timeline
+* Write a privacy-compliant report
+
+#### Deliverables:
+
+* Image hash logs
+* Keyword match results
+* Autopsy screenshot
+* Report in PDF
+
+---
+
+## 🚀 BONUS: Automating Forensic Collection
+
+Use a script like this to collect quick live artifacts:
+
+```bash
+#!/bin/bash
+mkdir /mnt/usb/LiveArtifacts
+ps aux > /mnt/usb/LiveArtifacts/processes.txt
+netstat -tulpen > /mnt/usb/LiveArtifacts/network.txt
+who > /mnt/usb/LiveArtifacts/users.txt
+cp /var/log/auth.log /mnt/usb/LiveArtifacts/
+history > /mnt/usb/LiveArtifacts/bash_history.txt
+```
+
+---
+
+## ✅ Summary
+
+| Phase                | Tool/Command                          |
+| -------------------- | ------------------------------------- |
+| Evidence Acquisition | `dd`, `dcfldd`, `LiME`                |
+| Disk Analysis        | `Autopsy`, `foremost`, `strings`      |
+| Memory Analysis      | `volatility`                          |
+| Timeline             | `log2timeline`, `psort`               |
+| Legal Compliance     | Chain logs, encrypted storage, hashes |
+
+---
+
+Would you like a **lab workbook**, **template report**, or a **virtual machine setup** for the forensic challenge? I can prepare one tailored to your scenario.
