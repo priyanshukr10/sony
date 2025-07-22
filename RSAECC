@@ -1,0 +1,99 @@
+Here's a detailed guide on how to perform **Asymmetric Key Encryption** using **RSA** and **ECC** in **CrypTool** (mostly CrypTool 1 and CrypTool 2, since ECC is better supported in CrypTool 2).
+
+---
+
+## 🔐 **1. RSA Encryption/Decryption (CrypTool 1 & 2)**
+
+### ✅ In **CrypTool 1** (classic menu-based)
+
+#### 🔸 Generate RSA Key Pair:
+
+1. Go to `Keys` > `Generate/Import Key Pair`.
+2. Select `RSA`.
+3. Choose key size (e.g., 1024, 2048 bits).
+4. Save:
+
+   * **Private key** (for decryption)
+   * **Public key** (for encryption)
+
+#### 🔸 Encrypt with Public Key:
+
+1. Enter your message in the main editor.
+2. Go to `Crypt` > `Asymmetric` > `RSA`.
+3. Select `Encrypt`.
+4. Load the **public key** you generated.
+5. CrypTool encrypts the message using RSA.
+
+#### 🔸 Decrypt with Private Key:
+
+1. Paste the encrypted text in the editor.
+2. Go to `Crypt` > `Asymmetric` > `RSA`.
+3. Choose `Decrypt`.
+4. Load the **private key**.
+5. The original plaintext is displayed.
+
+---
+
+## 🔐 **2. ECC (Elliptic Curve Cryptography) — CrypTool 2 Only**
+
+CrypTool 1 **does not support ECC**, but CrypTool 2 does via its visual workflow system.
+
+### ✅ In **CrypTool 2** (drag-and-drop interface)
+
+#### 🔸 Steps to Perform ECC Encryption:
+
+1. Launch **CrypTool 2**.
+
+2. Create a **new workspace**.
+
+3. From the component list (left panel), drag and drop the following:
+
+   * **TextInput** (your plaintext)
+   * **ECC Key Generator**
+   * **ECC Encryptor**
+   * **ECC Decryptor**
+   * **TextOutput**
+
+4. Connect components:
+
+   * `TextInput` → `ECC Encryptor`
+   * `ECC Key Generator` → both `ECC Encryptor` and `ECC Decryptor`
+   * `ECC Encryptor` → `ECC Decryptor`
+   * `ECC Decryptor` → `TextOutput`
+
+5. Click the **Play/Run** button (▶️) on the toolbar.
+
+6. ECC will:
+
+   * Encrypt using the public key.
+   * Decrypt using the private key.
+   * Show the result in the TextOutput block.
+
+---
+
+## 🔑 Key Points Comparison
+
+| Feature      | RSA                         | ECC                            |
+| ------------ | --------------------------- | ------------------------------ |
+| Key Size     | 1024/2048/4096 bits         | 160–521 bits                   |
+| Security     | Good, slower for large data | Equivalent strength, faster    |
+| Supported in | CrypTool 1 and 2            | Only CrypTool 2                |
+| Usage        | Encryption, signatures      | Same (more modern & efficient) |
+
+---
+
+## 🧪 Sample Values for RSA
+
+* **Plaintext**: `HELLO ECC RSA`
+* **RSA Key Size**: 2048 bits
+* **Result**: Ciphertext will be shown in base64 or hex
+
+---
+
+Would you like:
+
+* A **CrypTool 2 file example (.ctx)** with a working ECC encryption?
+* A **demo video** or step-by-step screenshots?
+* Help scripting RSA/ECC in CrypTool 2’s visual programming?
+
+Let me know how you’d like to proceed!
