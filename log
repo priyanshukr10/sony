@@ -1,0 +1,232 @@
+Here’s a comprehensive **demo and lab guide for Evidence Checkout Log, Investigation, and Detection using Kali Linux** — designed for cyber forensics labs, academic exercises, or incident response simulations.
+
+---
+
+## 🎯 **Objective**
+
+* Maintain a **chain of custody** using an **Evidence Checkout Log**
+* Perform basic **investigation and detection** of suspicious activity
+* Use Kali tools for **data extraction**, **event correlation**, and **artifact analysis**
+
+---
+
+## 🧰 TOOLS USED (All in Kali Linux)
+
+| Category            | Tools                                            |
+| ------------------- | ------------------------------------------------ |
+| Log & Evidence Mgmt | Manual logs, `libbfio`, Excel                    |
+| Disk Analysis       | `Autopsy`, `Sleuth Kit`, `foremost`              |
+| Event Detection     | `log2timeline`, `volatility`, `whois`, `netstat` |
+| Report Generation   | Manual or scripted templates                     |
+
+---
+
+# 🧪 PART 1: Evidence Checkout Log 📋
+
+### ✅ Step 1: Create an Evidence Log Template
+
+**Sample Format (CSV or paper logbook):**
+
+| Entry No | Date/Time        | Examiner   | Evidence ID | Description   | Action   | Hash Value    | Signature |
+| -------- | ---------------- | ---------- | ----------- | ------------- | -------- | ------------- | --------- |
+| 001      | 2025-07-22 10:00 | John Smith | USB001      | 8GB USB drive | Acquired | `6b1f...a12f` | John      |
+
+> You can use LibreOffice on Kali or `nano`/`vim` to maintain plain-text logs.
+
+---
+
+## 🔍 PART 2: Evidence Acquisition and Integrity
+
+### ✅ Step 1: Disk Imaging with `dcfldd`
+
+```bash
+sudo dcfldd if=/dev/sdb of=/mnt/evidence/usb001.dd hash=sha256 hashlog=usb001.hash
+```
+
+* Log the **evidence ID**, **hash**, and **timestamp** in the checkout log.
+
+### ✅ Step 2: Verify Integrity
+
+```bash
+sha256sum /mnt/evidence/usb001.dd
+```
+
+---
+
+# 🔍 PART 3: Investigation – File System Analysis
+
+### ✅ Step 1: Analyze with Autopsy
+
+```bash
+autopsy
+```
+
+* Add `usb001.dd` to a case
+* Extract:
+
+  * Deleted files
+  * Keyword hits (use "flag", "secret", "key")
+  * Recent files and timestamps
+  * USB device artifacts
+
+---
+
+## ✅ Step 2: Run `fls` and `icat` (Sleuth Kit CLI)
+
+```bash
+fls -r -m / usb001.dd > bodyfile.txt
+```
+
+Recover deleted files:
+
+```bash
+icat usb001.dd <inode#>
+```
+
+---
+
+# 🔥 PART 4: Detection of Suspicious Activity
+
+## ✅ Step 1: Analyze Timestamps with `log2timeline` & `plaso`
+
+```bash
+log2timeline.py plaso.dump usb001.dd
+psort.py -o l2tcsv -w timeline.csv plaso.dump
+```
+
+* Open in LibreOffice or Excel for timeline analysis
+* Filter for:
+
+  * Irregular logins
+  * Files opened at odd times
+  * Execution of `.exe`, `.bat`, `.vbs`
+
+---
+
+## ✅ Step 2: Memory Analysis (if available)
+
+If RAM image available:
+
+```bash
+volatility -f mem.img imageinfo
+volatility -f mem.img pslist
+volatility -f mem.img netscan
+```
+
+Look for:
+
+* Suspicious processes
+* Network activity
+* Extract strings from memory
+
+---
+
+# 📡 PART 5: Detection Tools
+
+## ✅ Use `netstat`, `whois`, `tcpdump` if analyzing live system
+
+```bash
+netstat -tulnp
+whois suspiciousdomain.com
+```
+
+Use `tcpdump` to capture potential exfiltrations:
+
+```bash
+sudo tcpdump -i eth0 -w suspicious.pcap
+```
+
+Analyze with Wireshark.
+
+---
+
+# 🧾 PART 6: Report & Findings Template
+
+### 📄 Example Report Sections
+
+1. **Case ID and Summary**
+2. **Evidence Details (ID, Description, Hash)**
+3. **Chain of Custody Log**
+4. **Tools Used**
+5. **Findings**
+
+   * Deleted files
+   * Unusual logins
+   * Suspicious software
+   * Possible data exfiltration
+6. **Conclusion & Recommendations**
+7. **Appendices**
+
+   * Screenshots
+   * Hash logs
+   * Timeline
+
+---
+
+# 👨‍🏫 Suggested Lab Exercise Template
+
+### 🔍 **Lab Title**: Detecting Suspicious Behavior on USB Evidence
+
+1. Create a disk image of a provided USB or `.dd` file
+2. Record entry in evidence log
+3. Run Autopsy and `log2timeline` to extract findings
+4. Identify:
+
+   * Hidden files
+   * Malware (.exe/.vbs)
+   * Sensitive keywords
+5. Write a report & update evidence log
+
+---
+
+# 🧠 Tips for Students
+
+✅ Always hash before and after acquisition
+✅ Keep logs updated – no edits allowed after entry
+✅ Label digital evidence like physical: with ID, name, date
+✅ If in doubt, **do not modify the source**
+
+---
+
+## 🧩 Optional: Automate Logs with Shell Script
+
+```bash
+#!/bin/bash
+echo "Evidence Checkout Entry"
+read -p "Examiner: " examiner
+read -p "Evidence ID: " evid
+read -p "Description: " desc
+hashval=$(sha256sum $1 | awk '{print $1}')
+timestamp=$(date)
+echo "$timestamp,$examiner,$evid,$desc,Acquired,$hashval" >> evidence_log.csv
+```
+
+Usage:
+
+```bash
+./evidlog.sh usb001.dd
+```
+
+---
+
+## ✅ Summary
+
+| Task                   | Tool/Command                       |
+| ---------------------- | ---------------------------------- |
+| Create log             | LibreOffice, `nano`, or script     |
+| Acquire evidence       | `dcfldd`, `dd`, `sha256sum`        |
+| Analyze disk           | Autopsy, `fls`, `icat`, `foremost` |
+| Create timeline        | `log2timeline`, `psort`            |
+| Memory forensics       | Volatility                         |
+| Network/host detection | `netstat`, `whois`, `tcpdump`      |
+| Reporting              | Manual, markdown, PDF              |
+
+---
+
+Would you like:
+
+* A **downloadable evidence log template** (CSV/Excel)?
+* A **sample `.dd` image** to use in labs?
+* A **pre-configured Kali lab environment**?
+
+Let me know and I’ll prepare the resources!
