@@ -1,0 +1,298 @@
+FTK Imager is **not natively available for Kali Linux**, but you can still **create forensic disk images** on Kali using alternative tools that perform the **same or better functions** as FTK Imager.
+
+Let’s go through:
+
+---
+
+## ✅ Equivalent Forensic Imaging on Kali Linux
+
+| FTK Imager Function    | Kali Alternative Tool(s)          |
+| ---------------------- | --------------------------------- |
+| Create disk image      | `dd`, `dcfldd`, `guymager`        |
+| Verify hash (MD5/SHA1) | `md5sum`, `sha256sum`, `hashdeep` |
+| Preview file system    | `autopsy`, `tsk`, `mount`         |
+| Create E01 image       | `ewfacquire` (part of libewf)     |
+
+---
+
+## 🔧 Option 1: **Using `dd` or `dcfldd` for Raw Image Creation**
+
+### ✅ Step-by-Step with `dd`
+
+1. **Identify the drive**
+
+```bash
+sudo fdisk -l
+```
+
+Find your target device (e.g., `/dev/sdb`).
+
+2. **Create the image**
+
+```bash
+sudo dd if=/dev/sdb of=/mnt/evidence/sdb_image.dd bs=4M status=progress
+```
+
+3. **Generate hash for integrity**
+
+```bash
+sha256sum /mnt/evidence/sdb_image.dd > sdb_image.dd.sha256
+```
+
+You can also use:
+
+```bash
+md5sum /mnt/evidence/sdb_image.dd > sdb_image.dd.md5
+```
+
+---
+
+### ✅ Using `dcfldd` (Better logging and hashing)
+
+```bash
+sudo apt install dcfldd
+```
+
+Then:
+
+```bash
+sudo dcfldd if=/dev/sdb of=sdb_image.dd hash=sha256 hashlog=sdb_image.hash.txt
+```
+
+---
+
+## 🔧 Option 2: **Create E01 Image Using `ewfacquire` (Expert Witness Format)**
+
+### Install EWF Tools:
+
+```bash
+sudo apt install ewf-tools
+```
+
+### Acquire image:
+
+```bash
+sudo ewfacquire /dev/sdb
+```
+
+This will walk you through options to:
+
+* Set case details
+* Choose compression
+* Output `.E01` file
+
+---
+
+## 🔍 Option 3: **GUI Tool: Guymager**
+
+```bash
+sudo apt install guymager
+sudo guymager
+```
+
+* User-friendly GUI
+* Select device, set image name
+* Supports raw (dd) or EWF (E01)
+* Automatically hashes image
+
+---
+
+## 📁 Output Structure (Recommended)
+
+```bash
+/evidence/
+├── sdb_image.dd
+├── sdb_image.dd.sha256
+├── case_notes.txt
+├── imaging_log.txt
+```
+
+---
+
+## 🛡 Best Practices in Imaging
+
+* Always work on a **write-blocked** device or virtual image
+* Use **live logs** (`tee`, hash logs)
+* Store images on separate media (external HDD, NAS)
+* Maintain **Chain of Custody**
+
+---
+
+## ✅ Summary of Commands
+
+| Task                        | Command                                      |
+| --------------------------- | -------------------------------------------- |
+| Raw image with `dd`         | `dd if=/dev/sdX of=image.dd bs=4M`           |
+| Image with hashing (dcfldd) | `dcfldd if=/dev/sdX of=image.dd hash=sha256` |
+| Create `.E01` format        | `ewfacquire /dev/sdX`                        |
+| GUI-based imaging           | `guymager`                                   |
+| Generate hash manually      | `sha256sum image.dd > hash.txt`              |
+
+---
+
+## Want a Practice Lab?
+
+I can provide:
+
+* Simulated evidence (small `.dd` or `.E01`)
+* Tasks like hash verification, mounting, carving
+* Checklist for a complete imaging process
+
+Let me know and I’ll build it for you.
+
+
+Here is a **step-by-step guide to create a forensic image using FTK Imager** (on **Windows**, as FTK Imager is not available for Linux directly):
+
+---
+
+## ✅ Prerequisites
+
+* A **Windows machine or VM**
+* Download FTK Imager from [AccessData's website](https://accessdata.com/product-download)
+* A **write blocker** (hardware or software) if using a real suspect drive (for forensic integrity)
+* A **destination** to save the image (external drive, different partition)
+
+---
+
+## 📸 Step-by-Step: Create a Forensic Image using FTK Imager
+
+---
+
+### 🔹 Step 1: Launch FTK Imager
+
+* Open **FTK Imager** from the Start menu or desktop shortcut.
+
+---
+
+### 🔹 Step 2: Select Source
+
+1. Click on **`File` → `Create Disk Image`**
+
+2. Choose the source type:
+
+   | Option         | Description                     |
+   | -------------- | ------------------------------- |
+   | Physical Drive | Whole physical disk (e.g., HDD) |
+   | Logical Drive  | Single partition (C:, D:, etc.) |
+   | Image File     | Already acquired image          |
+   | Folder         | Directory of files              |
+
+3. Select **Physical Drive** to image an entire disk.
+
+4. Click **Next**
+
+---
+
+### 🔹 Step 3: Choose Destination Image Type
+
+Choose image format:
+
+* `Raw (dd)` – compatible with Linux tools like `dd`, `Autopsy`, `Volatility`
+* `E01` (SMART/Expert Witness Format) – supports compression & metadata
+* `AD1` – AccessData Logical Image format
+* `AFF` – Advanced Forensics Format
+
+> 🔹 Recommended: **E01** for full disk imaging
+
+Click **Next**
+
+---
+
+### 🔹 Step 4: Fill in Case Info (Optional but Recommended)
+
+Enter details:
+
+* **Case Number**
+* **Evidence Number**
+* **Examiner Name**
+* **Notes**
+
+Click **Next**
+
+---
+
+### 🔹 Step 5: Select Image Destination
+
+Click **Add…** to set the destination path and options:
+
+1. **Image Destination Folder** → Browse to your external/exam folder
+2. **Image Filename** → e.g., `evidence001`
+3. **Image Fragment Size** → Default is 1500MB; use default or change
+4. **Compression** → Recommended for E01
+5. **Password** → Optional
+
+Click **Finish**
+
+---
+
+### 🔹 Step 6: Image Summary & Start
+
+1. Review settings
+2. Confirm all info is correct
+3. Click **Start**
+
+FTK Imager begins imaging, showing:
+
+* % progress
+* Hash calculation (MD5/SHA1)
+* Sector count
+
+---
+
+### 🔹 Step 7: Review and Verify
+
+After imaging is complete:
+
+* Verify image hash matches the original disk
+* Save or print the **log report** (lists all info and hashes)
+
+---
+
+### 🔹 Step 8: Save Case Report
+
+Go to:
+
+```
+File → Create Report
+```
+
+Include:
+
+* Hash values
+* Image metadata
+* Notes
+
+Save this report as part of your case documentation.
+
+---
+
+## 📂 Output Folder Structure Example
+
+```
+/Evidence/
+├── evidence001.E01
+├── evidence001.E01.txt (log)
+├── evidence001.E01.md5
+├── case_notes.txt
+```
+
+---
+
+## 🛡️ Best Practices
+
+* Use a **write blocker** to prevent modifying the suspect disk
+* Hash the source drive **before and after** imaging
+* Store the image and hashes in a secure location
+* Keep logs and chain of custody records
+
+---
+
+## ❓Want a Practice Lab?
+
+I can provide:
+
+* Sample disk images for training
+* Hash verification and file carving exercises
+* FTK Imager report templates
+
+Would you like that?
