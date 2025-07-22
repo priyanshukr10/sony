@@ -1,0 +1,248 @@
+Here's a **step-by-step guide** to create a **PKI hierarchy** using **OpenSSL** for an **Intranet HTTPS website**, with the following setup:
+
+---
+
+## 🧱 **Goal**
+
+* Create **self-signed certificates** using OpenSSL
+* Create a **Hierarchical Trust Model**:
+
+  * ✅ `Root CA` (Debian) — `rtca.pgditiss.local`
+  * ✅ `Subordinate CA` (Debian) — `sbca.pgditiss.local`
+  * ✅ `HTTPS Web Server` — `www.pgditiss.local`, certificate issued by **sbca**
+* Configure **Apache HTTPS**
+* Access from **Windows** machine without certificate warning
+
+---
+
+# ⚙️ PART 1: Prepare Environment (3 Debian VMs + 1 Windows)
+
+### VM 1: Root CA (`rtca.pgditiss.local`)
+
+### VM 2: Sub CA (`sbca.pgditiss.local`)
+
+### VM 3: Web Server (`www.pgditiss.local`)
+
+### Windows PC: Client (Browser access)
+
+> ✅ All Debian machines should have OpenSSL installed (`sudo apt install openssl apache2`)
+
+---
+
+# 🏗️ PART 2: Setup Root CA (`rtca.pgditiss.local`)
+
+## Step 1: Create Directory Structure
+
+```bash
+sudo mkdir -p /root/ca/root
+cd /root/ca/root
+mkdir certs crl newcerts private
+touch index.txt
+echo 1000 > serial
+```
+
+## Step 2: Create OpenSSL Root CA Config (`openssl.cnf`)
+
+Save as `/root/ca/root/openssl.cnf`:
+
+```ini
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir             = /root/ca/root
+certs           = $dir/certs
+crl_dir         = $dir/crl
+database        = $dir/index.txt
+new_certs_dir   = $dir/newcerts
+certificate     = $dir/cacert.pem
+serial          = $dir/serial
+private_key     = $dir/private/cakey.pem
+default_days    = 3650
+default_md      = sha256
+policy          = policy_strict
+
+[ policy_strict ]
+commonName             = supplied
+organizationName       = optional
+organizationalUnitName = optional
+countryName            = optional
+emailAddress           = optional
+```
+
+## Step 3: Create Root CA Key and Self-Signed Certificate
+
+```bash
+cd /root/ca/root
+openssl genrsa -out private/cakey.pem 4096
+openssl req -x509 -new -nodes -key private/cakey.pem -sha256 -days 3650 -out cacert.pem -subj "/CN=RootCA"
+```
+
+✅ `cacert.pem` is your **self-signed Root CA certificate**
+
+---
+
+# 🧬 PART 3: Setup Subordinate CA (`sbca.pgditiss.local`)
+
+## Step 1: Create Directory Structure
+
+```bash
+sudo mkdir -p /root/ca/sub
+cd /root/ca/sub
+mkdir certs crl newcerts private csr
+touch index.txt
+echo 1000 > serial
+```
+
+## Step 2: Create Sub CA Key and CSR
+
+```bash
+openssl genrsa -out private/subcakey.pem 4096
+openssl req -new -key private/subcakey.pem -out csr/subca.csr -subj "/CN=SubCA"
+```
+
+---
+
+## Step 3: Sign Sub CA CSR with Root CA (on Root CA machine)
+
+Copy `subca.csr` from Sub CA to Root CA (`scp` or shared folder).
+
+Then on Root CA:
+
+```bash
+cd /root/ca/root
+openssl ca -config openssl.cnf -in /path/to/subca.csr -out certs/subcacert.pem -extensions v3_intermediate_ca -batch
+```
+
+If `v3_intermediate_ca` not defined, you can add to config:
+
+```ini
+[ v3_intermediate_ca ]
+basicConstraints = critical,CA:TRUE,pathlen:0
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+```
+
+✅ `subcacert.pem` is the Subordinate CA certificate, signed by Root CA
+
+Now copy it **back** to Sub CA server.
+
+---
+
+## Step 4: Create Sub CA Chain
+
+```bash
+cd /root/ca/sub
+cat certs/subcacert.pem /root/ca/root/cacert.pem > ca-chain.pem
+```
+
+---
+
+# 🌐 PART 4: Issue Certificate for `www.pgditiss.local` (on Sub CA)
+
+## Step 1: Generate Key and CSR (on Web Server)
+
+```bash
+openssl genrsa -out www.pgditiss.local.key 2048
+openssl req -new -key www.pgditiss.local.key -out www.pgditiss.local.csr -subj "/CN=www.pgditiss.local"
+```
+
+Copy CSR to Sub CA machine.
+
+---
+
+## Step 2: Sign Certificate (on Sub CA)
+
+Create simple OpenSSL config if needed.
+
+```bash
+openssl ca -in www.pgditiss.local.csr -out www.pgditiss.local.crt -cert certs/subcacert.pem -keyfile private/subcakey.pem -extensions server_cert -batch
+```
+
+Define `server_cert` in your `openssl.cnf` if needed:
+
+```ini
+[ server_cert ]
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = www.pgditiss.local
+```
+
+✅ You now have:
+
+* `www.pgditiss.local.crt`
+* `www.pgditiss.local.key`
+* Chain: `ca-chain.pem` (Root + Sub CA certs)
+
+---
+
+# 🔒 PART 5: Configure Apache for HTTPS (on Web Server)
+
+## Step 1: Enable SSL Module
+
+```bash
+sudo a2enmod ssl
+sudo systemctl restart apache2
+```
+
+## Step 2: Configure Virtual Host
+
+Edit `/etc/apache2/sites-available/pgditiss.local.conf`
+
+```apache
+<VirtualHost *:443>
+    ServerName www.pgditiss.local
+    DocumentRoot /var/www/html
+
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/www.pgditiss.local.crt
+    SSLCertificateKeyFile /etc/ssl/private/www.pgditiss.local.key
+    SSLCertificateChainFile /etc/ssl/certs/ca-chain.pem
+</VirtualHost>
+```
+
+Enable the site and restart Apache:
+
+```bash
+sudo a2ensite pgditiss.local.conf
+sudo systemctl reload apache2
+```
+
+---
+
+# 🖥️ PART 6: Windows Client Access (No Warning)
+
+## Step 1: Add DNS Resolution
+
+On Windows client, open `C:\Windows\System32\drivers\etc\hosts`:
+
+```
+<web server IP>   www.pgditiss.local
+```
+
+## Step 2: Import Root CA Certificate into Windows Trust Store
+
+1. Copy `cacert.pem` to Windows
+2. Rename to `cacert.crt`
+3. Double-click → Install Certificate
+4. Choose: **Trusted Root Certification Authorities**
+
+✅ Now `https://www.pgditiss.local` will be **trusted** in browser (no warning)
+
+---
+
+# ✅ Final Result Summary
+
+| Component        | Hostname                                        | Role                         |
+| ---------------- | ----------------------------------------------- | ---------------------------- |
+| Root CA          | rtca.pgditiss.local                             | Self-signed CA               |
+| Subordinate CA   | sbca.pgditiss.local                             | Signs web certs              |
+| HTTPS Web Server | [www.pgditiss.local](http://www.pgditiss.local) | Runs Apache with issued cert |
+| Windows PC       | N/A                                             | Client (trusts Root CA)      |
+
+---
+
+Would you like a ZIP of working configs and certs? Or help scripting this into a Bash script?
