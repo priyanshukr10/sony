@@ -1,0 +1,217 @@
+Here's a **comprehensive guide for conducting Demo and Lab sessions** on **Live System Forensics** and **Linux Forensics using Kali Linux**. This can be used in a class, training, or personal practice lab.
+
+---
+
+## 🎯 **OBJECTIVES**
+
+1. Perform **Live Forensics** on a running system.
+2. Perform **Post-Mortem Forensics** on Linux.
+3. Use Kali Linux tools to:
+
+   * Capture system state
+   * Analyze processes, users, and memory
+   * Collect logs, USB artifacts, bash history, etc.
+
+---
+
+## 🧰 PREREQUISITES
+
+* 🐧 Kali Linux (as forensic workstation)
+* 🖥️ Target system: Live Linux machine (Debian/Ubuntu/CentOS or another Kali VM)
+* ⚙️ Tools we'll use:
+
+  * `lsof`, `ps`, `netstat`, `volatility`, `dd`, `strings`, `foremost`
+  * Kali tools: **Autopsy**, **Chkrootkit**, **Volatility**, **LiME**, **Bulk Extractor**
+
+---
+
+# 🔍 **PART 1: Live System Forensics (on a Running System)**
+
+## ✅ Step 1: Capture Running Processes
+
+```bash
+ps aux > live_process_list.txt
+```
+
+## ✅ Step 2: List Open Files
+
+```bash
+lsof > open_files.txt
+```
+
+## ✅ Step 3: Capture Network Connections
+
+```bash
+netstat -tulpen > net_connections.txt
+ss -antup > ss_connections.txt
+```
+
+## ✅ Step 4: List Logged-in Users
+
+```bash
+w > logged_users.txt
+who -a > who_users.txt
+```
+
+## ✅ Step 5: Collect System Logs
+
+```bash
+cp /var/log/* /mnt/forensics/logs/
+```
+
+## ✅ Step 6: Dump Memory (use LiME)
+
+### Install LiME:
+
+```bash
+git clone https://github.com/504ensicsLabs/LiME.git
+cd LiME/src
+make
+```
+
+### Capture Memory:
+
+```bash
+insmod lime.ko "path=/mnt/usb/memdump.lime format=lime"
+```
+
+> ⚠️ Make sure USB or external disk is mounted at `/mnt/usb`.
+
+---
+
+# 🧠 **PART 2: Analyze Memory Dump using Volatility**
+
+### Step 1: Install Volatility
+
+```bash
+apt install volatility
+```
+
+### Step 2: Identify Profile
+
+```bash
+volatility -f memdump.lime imageinfo
+```
+
+### Step 3: Run Key Plugins
+
+```bash
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 pslist
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 netscan
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 bash
+volatility -f memdump.lime --profile=LinuxUbuntu_20_04x64 linux_netstat
+```
+
+---
+
+# 🧪 **PART 3: Linux Disk & File System Forensics (Post-Mortem)**
+
+## ✅ Step 1: Create Disk Image with `dd`
+
+```bash
+dd if=/dev/sda of=/mnt/usb/diskimage.dd bs=1M status=progress
+```
+
+## ✅ Step 2: Analyze Disk Image with Autopsy
+
+1. Open Kali menu → `Forensics` → `Autopsy`
+2. Start Autopsy, create new case
+3. Add disk image (`diskimage.dd`)
+4. Browse:
+
+   * Deleted files
+   * Web history
+   * User accounts
+   * Metadata, strings, etc.
+
+---
+
+## ✅ Step 3: Extract Deleted Files
+
+### Use `foremost`
+
+```bash
+foremost -i diskimage.dd -o output/
+```
+
+### Use `bulk_extractor`
+
+```bash
+bulk_extractor -o bulk_out -e all -R diskimage.dd
+```
+
+---
+
+# 🧾 **PART 4: Check System for Rootkits or Intrusions**
+
+## ✅ Use Chkrootkit
+
+```bash
+apt install chkrootkit
+chkrootkit
+```
+
+---
+
+## ✅ Use `last` and `auth.log` for User Activity
+
+```bash
+last -f /var/log/wtmp
+cat /var/log/auth.log | grep ssh
+```
+
+---
+
+## ✅ List Recent Files and Bash History
+
+```bash
+find / -type f -printf '%T+ %p\n' | sort -r | head -n 20
+cat /home/user/.bash_history
+```
+
+---
+
+# 🧪 DEMO SESSION IDEAS
+
+| Demo                  | Tools                              |
+| --------------------- | ---------------------------------- |
+| Live Process Capture  | `ps`, `top`, `htop`                |
+| Memory Dump           | `LiME`, `volatility`               |
+| Forensic Disk Imaging | `dd`, `dcfldd`, `Guymager`         |
+| Log Analysis          | `auth.log`, `wtmp`, `bash_history` |
+| Deleted File Recovery | `foremost`, `Autopsy`              |
+| Rootkit Scan          | `chkrootkit`, `rkhunter`           |
+
+---
+
+# 🧪 LAB EXERCISE TEMPLATE (Sample)
+
+### Objective: Analyze an Intrusion in a Live Linux System
+
+1. Capture running processes and open ports.
+2. Dump memory and analyze with `volatility`.
+3. Extract browser history and deleted files using `Autopsy`.
+4. Identify unauthorized logins via `auth.log`.
+5. Submit a report with evidence and timestamps.
+
+---
+
+## 🧰 TOOLS SHORTLIST (Kali Menu)
+
+* 🔍 **Autopsy** – GUI forensic suite
+* 🧠 **Volatility** – Memory analysis
+* 🧱 **LiME** – Kernel memory dumper
+* 🔎 **Chkrootkit** – Rootkit detector
+* 🧼 **Foremost** – File carver
+* 📦 **Bulk Extractor** – Extract email, credit cards, etc.
+* 📋 **Guymager** – Disk imaging
+
+---
+
+Would you like:
+
+* A **PDF handout** or **lab workbook** for students?
+* A **scripted lab setup** with VMs and test data?
+* Sample memory/disk images to practice?
+
+Let me know!
