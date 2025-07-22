@@ -1,0 +1,64 @@
+To use **CrypTool** for both **symmetric** and **asymmetric encryption/decryption**, follow these steps. CrypTool is an open-source educational tool for cryptographic methods and algorithms.
+
+> ✳️ If you haven’t already, download CrypTool from [https://www.cryptool.org](https://www.cryptool.org) (choose either CrypTool 1 or CrypTool 2; instructions below are for **CrypTool 1** for simplicity).
+
+---
+
+## 🔐 **Symmetric Key Encryption/Decryption in CrypTool 1**
+
+### ✅ Example: Encrypt and Decrypt with AES (Advanced Encryption Standard)
+
+#### 🔹 Encryption Steps:
+
+1. Open CrypTool 1.
+2. Type a message in the main text area.
+3. Go to `Crypt` > `Symmetric (classic)` > `AES`.
+4. Choose **Encrypt**.
+5. Enter a **password/key** (e.g., `mypassword123`) and choose a **key size** (e.g., 128-bit).
+6. Click OK – your text will be encrypted (shown in hex or binary).
+
+#### 🔹 Decryption Steps:
+
+1. Copy or keep the encrypted message.
+2. Paste it into a new CrypTool window.
+3. Go to `Crypt` > `Symmetric (classic)` > `AES`.
+4. Choose **Decrypt**.
+5. Enter the **same key/password** used during encryption.
+6. Click OK – you will see the original message.
+
+---
+
+## 🔐 **Asymmetric Key Encryption/Decryption in CrypTool 1**
+
+### ✅ Example: Using RSA
+
+#### 🔹 Step 1: Generate RSA Key Pair
+
+1. Go to `Keys` > `Generate/Import Key Pair`.
+2. Choose `RSA` and specify key size (e.g., 1024 or 2048 bits).
+3. Save both public and private keys for later use.
+
+#### 🔹 Step 2: Encrypt with Public Key
+
+1. Type a message in the main text window.
+2. Go to `Crypt` > `Asymmetric` > `RSA`.
+3. Choose `Encrypt`.
+4. Load the **public key** file you saved earlier.
+5. The message is encrypted and displayed.
+
+#### 🔹 Step 3: Decrypt with Private Key
+
+1. Paste the encrypted message into a new CrypTool window.
+2. Go to `Crypt` > `Asymmetric` > `RSA`.
+3. Choose `Decrypt`.
+4. Load the corresponding **private key**.
+5. The decrypted message (original text) will appear.
+
+---
+
+## ✅ Tips
+
+* CrypTool 1 provides visual feedback and statistics – explore `Analysis` to see how secure your encrypted messages are.
+* If you're using **CrypTool 2**, the process is more visual (drag-and-drop workflow using blocks for encryption/decryption).
+
+Would you like a **step-by-step guide with screenshots** for either CrypTool 1 or CrypTool 2? Or a **sample text and key** to test with?
