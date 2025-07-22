@@ -1,0 +1,219 @@
+Here’s a **step-by-step guide on how to hide and extract text in an image using Steganography tools in Kali Linux**, perfect for beginners or forensic demos.
+
+---
+
+## 🎯 **Objective:**
+
+Hide secret text inside an image and later retrieve it using tools available in **Kali Linux**.
+
+---
+
+## 🧰 TOOLS YOU CAN USE (Preinstalled or Easy to Install)
+
+| Tool       | Purpose                      |
+| ---------- | ---------------------------- |
+| `steghide` | Hides text/data in images    |
+| `exiftool` | View metadata                |
+| `zsteg`    | Analyze PNG stego (optional) |
+| `binwalk`  | Extract embedded files       |
+
+---
+
+# 🔐 PART 1: Hide Text in an Image using `steghide`
+
+### ✅ Step 1: Prepare Files
+
+* **Cover Image:** Any `.jpg` or `.bmp`
+* **Secret Text File:** Create one
+
+```bash
+echo "This is a secret message." > secret.txt
+```
+
+* Example cover image: `cover.jpg`
+
+### ✅ Step 2: Embed Text into Image
+
+```bash
+steghide embed -cf cover.jpg -ef secret.txt
+```
+
+> You'll be prompted to set a passphrase (remember it!).
+
+---
+
+# 📂 PART 2: Extract Hidden Text from Image
+
+### ✅ Step 1: Use `steghide` to Extract
+
+```bash
+steghide extract -sf cover.jpg
+```
+
+> Enter the same passphrase used during embedding.
+
+* Output: It will extract `secret.txt` to your current directory.
+
+---
+
+# 🔍 PART 3: Inspect Image for Clues (Optional Forensics)
+
+### 🛠 Tool: `exiftool`
+
+Check metadata for clues:
+
+```bash
+exiftool cover.jpg
+```
+
+### 🛠 Tool: `binwalk`
+
+Scan image for hidden data segments:
+
+```bash
+binwalk cover.jpg
+```
+
+### 🛠 Tool: `zsteg` (for PNGs)
+
+```bash
+zsteg suspicious.png
+```
+
+---
+
+## 🧪 BONUS: Lab Example Scenario
+
+| Item         | File                                                                         |
+| ------------ | ---------------------------------------------------------------------------- |
+| Cover Image  | `image.jpg`                                                                  |
+| Secret File  | `key.txt`                                                                    |
+| Tool         | `steghide`                                                                   |
+| Student Task | Extract hidden message from `image.jpg` using known password: `forensics123` |
+
+---
+
+## ❗️ NOTES
+
+* `steghide` works with **.jpg** and **.bmp** (not `.png`)
+* Keep your passphrase safe — it’s required to extract the data
+* Avoid uploading stego images online (some platforms strip metadata)
+
+---
+
+## ✅ Summary
+
+| Task           | Command                                       |
+| -------------- | --------------------------------------------- |
+| Create secret  | `echo "msg" > secret.txt`                     |
+| Embed in image | `steghide embed -cf image.jpg -ef secret.txt` |
+| Extract text   | `steghide extract -sf image.jpg`              |
+| Metadata check | `exiftool image.jpg`                          |
+| Deep scan      | `binwalk image.jpg`                           |
+
+---
+
+Would you like:
+
+* A **practice stego image** with a hidden message?
+* A **Python-based alternative** for educational use?
+* A **challenge setup** for classroom/lab?
+
+Let me know and I can help prepare the materials!
+
+
+
+Thanks for sharing the image! Here's a clear **step-by-step breakdown** of the **steganography lab process** written in your notebook, using `steghide` on Kali Linux to **hide and extract text from an image**.
+
+---
+
+### 🧪 **Topic: Steganography (Data Hiding)**
+
+---
+
+## 🔹 Step 1: Setup Folders & Move Image
+
+```bash
+cd ~/Downloads
+ls
+sudo mkdir -p ~/last
+sudo mv ~/Downloads/Image.jpg ~/last
+cd ~/last
+```
+
+---
+
+## 🔹 Step 2: Create Secret Text File
+
+```bash
+sudo nano Harshita.txt
+```
+
+> ✍️ Inside the file, write:
+
+```
+Harshit you are not wrong
+```
+
+Then save and exit (`Ctrl + O`, `Enter`, `Ctrl + X`)
+
+---
+
+## 🔹 Step 3: Embed Text into Image
+
+```bash
+sudo steghide embed -cf lastImage.jpg -ef Harshita.txt
+```
+
+* `-cf` = cover file (image)
+* `-ef` = embedded file (text)
+* You’ll be prompted for a **passphrase** (remember it).
+
+---
+
+## 🔹 Step 4: Extract Hidden Text (Data Extraction)
+
+```bash
+sudo mv Harshita.txt Harshita-backup.txt
+sudo steghide extract -sf last.jpg
+```
+
+> If successful, you'll see:
+
+```
+wrote extracted data to "Harshita.txt"
+```
+
+---
+
+## 🔹 Step 5: View the Extracted Data
+
+```bash
+cat Harshita.txt
+```
+
+✅ Output should show:
+
+```
+Harshit you are not wrong
+```
+
+---
+
+## 📘 Summary of Commands
+
+| Purpose             | Command                                                  |
+| ------------------- | -------------------------------------------------------- |
+| Create folder       | `sudo mkdir -p ~/last`                                   |
+| Move image          | `sudo mv ~/Downloads/Image.jpg ~/last`                   |
+| Create secret text  | `sudo nano Harshita.txt`                                 |
+| Embed text          | `sudo steghide embed -cf lastImage.jpg -ef Harshita.txt` |
+| Backup text         | `sudo mv Harshita.txt Harshita-backup.txt`               |
+| Extract hidden text | `sudo steghide extract -sf last.jpg`                     |
+| View output         | `cat Harshita.txt`                                       |
+
+---
+
+Would you like me to turn this into a **PDF lab sheet** or a **practical assignment** format for students?
+
+
