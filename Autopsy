@@ -1,0 +1,362 @@
+Great — you're looking to use **Autopsy** on **Kali Linux** for a **full forensic investigation**.
+
+Autopsy is a **graphical frontend for Sleuth Kit**, offering a complete platform for:
+
+* Disk and file system analysis
+* File carving
+* Timeline creation
+* Keyword and hash searches
+* Email/web/artifact analysis
+
+---
+
+## ✅ Step-by-Step: Using Autopsy on Kali Linux
+
+---
+
+### 🔹 Step 1: Install Autopsy (if not already)
+
+Autopsy is **pre-installed** on most Kali versions, but you can install it manually:
+
+```bash
+sudo apt update
+sudo apt install autopsy sleuthkit -y
+```
+
+---
+
+### 🔹 Step 2: Start Autopsy
+
+```bash
+autopsy
+```
+
+> This launches a local web server on port 9999.
+
+Open your browser and go to:
+
+```
+http://localhost:9999
+```
+
+---
+
+### 🔹 Step 3: Create a New Case
+
+1. Click **"Create New Case"**
+2. Enter:
+
+   * **Case Name** (e.g., `LinuxInvestigation`)
+   * **Base Directory** for storage
+3. Add optional details: case number, examiner name, notes
+
+Click **Next**.
+
+---
+
+### 🔹 Step 4: Add Data Source (Disk Image)
+
+Choose one:
+
+* **Disk Image / VM File** (`.dd`, `.img`, `.E01`)
+* Local drive
+* Logical files (folder of files)
+* Unallocated space
+
+> Example:
+
+```bash
+/mnt/evidence/diskimage.dd
+```
+
+Select type (e.g., `RAW (dd)` or `E01`) → Click **Next**
+
+---
+
+### 🔹 Step 5: Enable Ingest Modules
+
+Autopsy will prompt you to **select analysis modules**, such as:
+
+| Module                   | Purpose                        |
+| ------------------------ | ------------------------------ |
+| File Type Identification | Recognizes based on headers    |
+| Hash Lookup              | Checks against known hash sets |
+| Keyword Search           | Finds strings, patterns        |
+| Web Artifacts            | Browsing history, cookies      |
+| Email Parser             | Analyzes mailbox files         |
+| EXIF Metadata Extractor  | Extracts from images/files     |
+| Recent Activity          | Searches shell history, etc.   |
+
+> ✅ Enable the ones you need and click **Finish**
+
+---
+
+### 🔹 Step 6: Investigate!
+
+Once processing is done, you'll see results categorized into:
+
+* **File Types**
+* **Deleted Files**
+* **Web Artifacts**
+* **Keyword Hits**
+* **Recent Activities**
+* **Timeline View**
+* **Metadata / EXIF**
+* **File Carving Results**
+
+Click any section to drill down, view file previews, metadata, etc.
+
+---
+
+### 🔹 Step 7: Tag & Export Evidence
+
+You can:
+
+* **Bookmark files**
+* Add **notes**
+* Export individual files or whole reports
+
+Go to:
+
+```
+Case -> Generate Report
+```
+
+Export in formats:
+
+* `.html`
+* `.csv`
+* `.docx`
+
+---
+
+## 🛠️ Advanced Use Cases
+
+* Add **custom hash sets** (NSRL, malware)
+* Integrate **YARA rules**
+* Timeline user activity
+* Extract **chat logs**, **USB usage**, **shell history**
+
+---
+
+## 🧪 Example Practice Lab (Optional)
+
+I can provide:
+
+* A `.dd` image with hidden evidence
+* Questions like:
+
+  * "Which file was deleted?"
+  * "What command was last run in Bash?"
+  * "What image was modified?"
+* Scoring sheet for forensics training
+
+---
+
+## 🧾 Summary
+
+| Task           | Command / UI Location               |
+| -------------- | ----------------------------------- |
+| Start Autopsy  | `autopsy` → `http://localhost:9999` |
+| Add image      | Add Data Source → Disk image        |
+| Analyze files  | File Types, Deleted Files, etc.     |
+| Keyword search | Enable Ingest Module                |
+| View timeline  | Timeline tab                        |
+| Export report  | Case → Generate Report              |
+
+---
+
+Would you like a **ready-to-use practice disk image** for Autopsy?
+
+Here's a **step-by-step guide to using Autopsy on Kali Linux** for a **full forensic investigation** — disk images, timeline analysis, email/web history, file carving, hash search, and more.
+
+---
+
+## 🔧 Step 1: Install Autopsy on Kali Linux
+
+Autopsy is pre-installed on many Kali versions. If not:
+
+```bash
+sudo apt update
+sudo apt install autopsy sleuthkit -y
+```
+
+---
+
+## 🧪 Step 2: Launch Autopsy
+
+```bash
+autopsy
+```
+
+You'll see:
+
+```
+Starting Autopsy Forensic Browser at http://localhost:9999/autopsy
+```
+
+Now, open your browser and go to:
+
+```
+http://localhost:9999/autopsy
+```
+
+---
+
+## 🧩 Step 3: Create a New Case
+
+1. Click **“Create New Case”**
+2. Fill in:
+
+   * **Case Name**: e.g., `Student_Investigation`
+   * **Base Directory**: Default is `/home/<user>/autopsy`
+3. Click **“Next”**
+4. Add **Case Number** and **Examiner Name** (optional)
+5. Click **“Finish”**
+
+---
+
+## 💾 Step 4: Add Data Source (e.g., `.dd`, `.E01`, USB)
+
+1. Choose **Add Data Source**
+2. Select **Disk Image or VM File**
+3. Browse and add the forensic image (`image.dd`, `image.E01`, etc.)
+4. Input the type:
+
+   * **Disk Image (Raw or EWF)** or **Partition**
+5. Select analysis modules to run:
+
+   * Hash Lookup
+   * File Type Identification
+   * Keyword Search
+   * Web Artifacts, etc.
+6. Click **Next**, then **Finish**
+
+Autopsy will now parse the image.
+
+---
+
+## 🔍 Step 5: Explore the Evidence
+
+Once processed, you'll see the dashboard. Use these features:
+
+### 🎯 **Views**
+
+| View               | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| **Data Artifacts** | Extracted items like emails, chat, browser history |
+| **File Types**     | Images, videos, docs, archives, etc.               |
+| **Deleted Files**  | Lists deleted but recoverable files                |
+| **Keyword Hits**   | Shows results of keyword search                    |
+| **Timeline**       | Chronological file events                          |
+
+### 🔍 **File Browser**
+
+Navigate the entire file system inside the image.
+
+---
+
+## 🛠 Step 6: Perform Key Forensic Tasks
+
+### 🧾 Keyword Search
+
+* Click on **Keyword Search**
+* Add custom keywords (e.g., "password", "confidential")
+* Review hits
+
+---
+
+### 🧰 Hash Lookup
+
+* Use built-in NSRL or import your own hash sets
+* Detect known malicious or important files
+
+---
+
+### 🌐 Web Artifacts
+
+Autopsy will auto-extract:
+
+* Chrome/Firefox history
+* Cookies
+* Downloads
+* Cached pages
+
+---
+
+### 📸 View Images/Docs
+
+* Use built-in viewer to preview files like JPG, PDF, DOCX
+* Useful for finding screenshots, evidence, documents
+
+---
+
+### 🗑 Recover Deleted Files
+
+* Go to **Deleted Files** section
+* Right-click any recoverable file → **Extract File**
+* Save it to local disk
+
+---
+
+## 📆 Step 7: Timeline Analysis
+
+1. Click **“Timeline”**
+2. Filter by:
+
+   * File type (e.g., Executables, Documents)
+   * Date range
+3. Analyze activity patterns (e.g., login time, install time, deletions)
+
+---
+
+## 🧾 Step 8: Generate Report
+
+1. Click **Generate Report**
+2. Select report type (HTML, Excel, PDF, etc.)
+3. Choose what to include (Files, Artifacts, Keywords, etc.)
+4. Save the report for evidence submission
+
+---
+
+## 🧑‍💻 Sample Lab Scenario
+
+> **Image:** `student_laptop.dd`
+> **Objective:** Find out:
+>
+> * Who used the laptop?
+> * What websites were visited?
+> * Was sensitive data deleted?
+
+Using Autopsy:
+
+* Browse `/home/user/Documents/` → Found `Resume.docx`
+* Web history → Visited `darkwebmarket.site`
+* Deleted files → Found `BankPassword.txt` in unallocated space
+
+✅ Export all as evidence and generate a report.
+
+---
+
+## ✅ Summary
+
+| Task            | Tool/Action                            |
+| --------------- | -------------------------------------- |
+| Start Autopsy   | `autopsy` → Open in browser            |
+| Add image       | Add `.dd`, `.E01`, or device directly  |
+| Explore data    | File Browser, Deleted Files, Hash Hits |
+| Timeline        | Auto-created from file metadata        |
+| Export files    | Right-click → Extract                  |
+| Generate report | HTML/CSV from dashboard                |
+
+---
+
+Would you like:
+
+* A **sample image file** to practice on?
+* A **lab exercise sheet** with questions and answers?
+* An **offline PDF guide** for students?
+
+Let me know, and I’ll prepare it for you.
+
+
